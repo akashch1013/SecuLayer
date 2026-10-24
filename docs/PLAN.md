@@ -2044,6 +2044,21 @@ Acceptance:
 
 Never cut replay mode, the hard cases, the Limits content, the Results page with its denominators, or the tests.
 
+### Approved extension: local MCP reviews (2026-10-24)
+
+The developer approved completing M9/M10 and making the library usable through MCP.
+Implement local stdio tools for content inspection, proposed-action review, draft-reply
+review and capability status. Reuse the core defense library, keep the LLM judge off and
+make no model API calls. Load policy from a trusted local TOML file. Unknown action tools
+must be blocked. Supply ready-to-paste client configuration, plain-language decisions,
+honest coverage limits and a setup guide. Validate tool discovery and calls through a real
+MCP subprocess, including invalid input, policy failures and isolation between reviews.
+
+These are callable review tools. Automatic interception or enforcement of another server's
+tools is a separate integration. The host must call reviews and enforce their decisions.
+This extends the local demo's scope; it does not add real email or outbound tool execution.
+See `docs/MCP.md` for the supported action-policy shape and `PROGRESS.md` for verification.
+
 ## 10. Out of scope
 
 - Public deployment, accounts, databases, multiple users.

@@ -141,8 +141,8 @@ Attack cases: success-check hits. Normal cases: utility checks passed.
 
 ## Measured on this machine (changes between runs)
 
-SecuLayer's own processing time per layer, over B's runs: hidden_text median 0.4 ms (p90 1.4 ms); screening median 0.7 ms (p90 0.9 ms); hardening median 0.1 ms (p90 0.1 ms); tool_guard median 0.0 ms (p90 0.0 ms); output_guard median 0.0 ms (p90 0.1 ms).
+SecuLayer's own processing time per layer, over B's runs: hidden_text median 0.6 ms (p90 3.0 ms); screening median 0.8 ms (p90 2.1 ms); hardening median 0.1 ms (p90 0.2 ms); tool_guard median 0.0 ms (p90 0.0 ms); output_guard median 0.1 ms (p90 0.1 ms).
 
 Classifier: not downloaded on this machine; recorded scores were used.
 
-Generated at 2026-10-24T05:04:26Z.
+Generated at 2026-10-24T07:20:58Z.

@@ -1,5 +1,5 @@
 import { RotateCw, Unplug } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Outlet, useLocation } from "react-router";
 
 import { Button } from "../../components/Button";
@@ -36,12 +36,19 @@ function ServerUnreachable() {
 function Main() {
   const meta = useMeta();
   const { pathname, hash } = useLocation();
+  const previousPath = useRef(pathname);
 
   // A new page starts at the top, unless the link names a section (/how#patterns).
   useEffect(() => {
     const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
     if (target) target.scrollIntoView();
     else window.scrollTo(0, 0);
+    // Move keyboard and screen-reader users into the new page after navigation.
+    // Keep initial-load and same-page controls' focus intact.
+    if (previousPath.current !== pathname) {
+      document.getElementById("main")?.focus({ preventScroll: true });
+    }
+    previousPath.current = pathname;
   }, [pathname, hash]);
 
   return (

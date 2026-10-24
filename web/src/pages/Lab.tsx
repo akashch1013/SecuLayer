@@ -186,8 +186,13 @@ function ScenarioLab({ scenarioId }: { scenarioId: string }) {
         </aside>
         {selected ? (
           <div className="min-w-0 space-y-10">
-            <SetupPanel key={selected.id} scenario={detail} caseDetail={selected} />
-            <RunArea key={selected.id} scenario={detail} caseDetail={selected} runRef={runRef} />
+            <SetupPanel key={`setup:${selected.id}`} scenario={detail} caseDetail={selected} />
+            <RunArea
+              key={`run:${selected.id}`}
+              scenario={detail}
+              caseDetail={selected}
+              runRef={runRef}
+            />
             <AboutCase caseDetail={selected} />
           </div>
         ) : (

@@ -1,5 +1,5 @@
 # SecuLayer build progress
-Plan: docs/PLAN.md · Last updated: 2026-10-24, session 6 (M7–M8, cloud container)
+Plan: docs/PLAN.md · Last updated: 2026-10-24, session 7 (MCP, M9–M10, macOS)
 
 ## Milestones
 | ID | Name | Status (not started / in progress / done) | Verified by | Commit |
@@ -12,11 +12,11 @@ Plan: docs/PLAN.md · Last updated: 2026-10-24, session 6 (M7–M8, cloud contai
 | M6 | Attack qualification and full recordings | done | make check (388 pytest, 55 Vitest, lint/types); env -u OPENAI_API_KEY make e2e (32 passed, one worker, full suite once); replay-check zero missing for both models; 684,722 tokens; 1,781,649 recording bytes | see `git log` ("M6: qualified attacks and full recordings") |
 | M7 | Evaluation and Results page | done | make check (398 pytest incl. 8 metric tests with hand-computed answers and the eval-twice determinism test; 61 Vitest), env -u OPENAI_API_KEY make e2e (36 passed incl. the Results page and its empty state), make eval twice identical apart from generated_at and live latencies, screenshot m7-results-1440.png reviewed | see `git log` ("M7: evaluation and results") |
 | M8 | Explainer pages and Sandbox | done (laptop views; phones out of scope) | make check (400 pytest, 81 Vitest incl. the sources-equal-§12 test), env -u OPENAI_API_KEY make e2e (52 passed: every page with axe and local-only requests, large-text at 1280 without sideways scroll, the Sandbox replay flow, the /how#patterns anchor), screenshots m8-*.png reviewed | see `git log` ("M8: …") |
-| M9 | Accessibility, presenter readiness and polish | not started | | |
-| M10 | Final verification | not started | | |
+| M9 | Accessibility, presenter readiness and polish | in progress (final verification) | See Session 7 | |
+| M10 | Final verification | in progress; live check needs a configured key | See Session 7 | |
 
 ## Current state
-**M1–M7 are complete.** All planned model calls are recorded for offline use, and `make eval` turns them into `data/eval/latest.json`, `docs/RESULTS.md` and the Results page (see "M7" below). Case copy and PLAN §3.6 describe the recorded outcomes and the known limits of the keyword checks. Both featured attacks retain their frozen payloads and default to trial 2.
+**M1–M8 are complete.** All planned model calls are recorded for offline use, and `make eval` turns them into `data/eval/latest.json`, `docs/RESULTS.md` and the Results page (see "M7" below). Case copy and PLAN §3.6 describe the recorded outcomes and the known limits of the keyword checks. Both featured attacks retain their frozen payloads and default to trial 2.
 
 Historical foundation context:
 Session 2 ran in a Claude Code cloud container (Linux, Python 3.12, Node 22.22), not on the laptop. It had no OPENAI_API_KEY, and the proxy refused the classifier download (403 from the Hugging Face CDN). Everything that needs neither was built and tested.
@@ -285,3 +285,69 @@ Session 2 ran in a Claude Code cloud container (Linux, Python 3.12, Node 22.22),
 - At the author's request the report presents the system as complete: no milestones, statuses or "pending" wording. Unmeasured work (the full-scale evaluation, explainer pages, Sandbox) appears only under Future Enhancement, and no unmeasured result is claimed. The milestone table and Appendices B and C were dropped; Table 6.3 keeps 14 of its 20 cases, renumbered.
 - `restyle_report.py` (the earlier masterreport-style rebuild) is superseded but kept.
 - The running header ("SecuLayer: A Layered Defense Against Prompt Injection") was removed at the author's request: body pages use the empty header; pagination is unchanged.
+
+## Session 7 (2026-10-24, macOS): MCP and final milestones
+
+The developer approved completing M9/M10 and adding callable MCP inspection/review tools.
+This extends the original demo plan; it does not intercept other MCP servers' calls.
+
+### MCP implementation
+
+- Added `seculayer mcp` (local stdio, official MCP Python SDK 2.3.0, pinned with the existing
+  dependency cutoff) and `seculayer mcp-config` (absolute executable/arguments as desktop JSON).
+- Tools: `seculayer_status`, `inspect_content`, `review_action`, `review_reply`. Policies load
+  once from trusted local TOML; unknown tools and outbound actions without recipients block.
+  Each review reconstructs its context from the original user request and supplied sources.
+- The judge is off; no API calls or automatic downloads. Optional classifier inference stays
+  local. New classifier scores stay in memory and cannot modify committed demo scores.
+  Explanations omit raw excerpts and withhold configured private values. Tool metadata marks
+  reviews as read-only. The host must enforce block/confirmation decisions.
+- Added `examples/mcp-policy.toml`, ignored `mcp-policy.local.toml`, replaced the README stub
+  and added `docs/MCP.md`, including supported email-style action policies and coverage limits.
+- All 15 MCP tests pass, including a real SDK client/server subprocess launched from another
+  working directory: discovery, all four tools, nested outside-content arguments, annotations,
+  invalid input and recovery. Other tests cover hidden/visible injections, unavailable classifier
+  coverage, unknown tools, permission/recipient/canary decisions, context isolation, secret/image
+  filtering, memory-only scores, generated config and private startup errors.
+
+### M9 implementation and audits
+
+- Page navigation now moves focus into main content; the prompt-anatomy section keeps its
+  visible focus outline. Existing aria-live outcomes, reduced-motion styles and prewarming
+  remain in place.
+- The keyboard presentation test exposed duplicate sibling React keys on SetupPanel and
+  RunArea. Changing cases could retain the previous setup and detach shortcut run handlers.
+  Their keys now include distinct setup/run prefixes. The presentation test checks that case
+  changes leave exactly one setup panel and exercise fresh run handlers.
+- Added an audit for all 12 routes (including four scenario screens and Not found), both text
+  sizes at both planned viewports, reduced motion, axe and no horizontal overflow.
+- Reviewed `artifacts/screenshots/m9-{home,scenarios,inbox,support,page,helpdesk,how,results,
+  limits,sandbox,sources,not-found}-{1440-normal,1280-large}.png`: typography, wrapping,
+  navigation, table/card boundaries and source colours are consistent. Chrome can leave an
+  offscreen sandboxed iframe blank in a full-page screenshot until it enters the viewport;
+  the audit now scrolls it into view before capture. A manual frame/paint check confirmed the
+  shipping email renders normally (`m9-inbox-painted.png`); no sandbox permissions were added.
+- First protected replay through a fresh local backend: 0.379 s, HTTP 200, outcome stopped.
+  This is backend completion time; the browser intentionally paces replay events at 150 ms.
+  The optional classifier files are absent, so cold classifier prewarm timing is unmeasured.
+
+### M10 verification and environment
+
+- Installed locked Python/web dependencies into this repository. The system Node is 20.15.1;
+  validation uses a repository-local Node 22.23.0 under `.cache/node`. System installations
+  were not changed. PyPI/browser downloads initially timed out; pinned Python installation
+  succeeded on retry. Browser validation uses installed Chrome 155 via E2E_CHROME_CHANNEL.
+- `make check` passed: 415 pytest, 81 Vitest, ruff, strict library mypy, ESLint and TypeScript.
+  Three pre-existing tests skip because the optional classifier model is not downloaded.
+- Both recording audits passed: mini 3,489 checked, full 51 checked, zero missing/incomplete.
+  Existing unreferenced mini records are reported and retained.
+- Recomputed results offline from real recordings: 528 runs, zero errors, original metrics
+  unchanged. Only generated timestamp and local timings changed. No model API calls made.
+- `run.sh` supports BSD/macOS stat and browser opening, checks Node's required version early,
+  and starts without automatically downloading the optional classifier.
+- Playwright now supports explicit real-recording and live presentation modes; the default
+  still clears the key and uses fake fixtures. Installed Chrome is an optional test fallback.
+- **Still to finish in this session:** final browser suite and real-recording keyboard run,
+  followed by final status/commits. **External prerequisite for M10:** no OpenAI key is
+  configured here, so the real live-mode acceptance run cannot be performed. Do not mark
+  M10 complete or create v1.0 until that check passes.

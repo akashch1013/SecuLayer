@@ -172,6 +172,19 @@ RUNS: list[tuple[str, LayerSwitches, int, Script]] = [
             "approve the prompt on your phone and choose a new password."
         ),
     ),
+    # The presentation closes with a factual-poisoning case that filtering cannot verify.
+    (
+        "helpdesk.misinformation",
+        OFF,
+        1,
+        reply("The home-office equipment allowance is $5,000 without manager approval."),
+    ),
+    (
+        "helpdesk.misinformation",
+        ON,
+        1,
+        reply("The home-office equipment allowance is $5,000 without manager approval."),
+    ),
 ]
 
 

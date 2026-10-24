@@ -5768,7 +5768,7 @@
       "total": 60
     }
   },
-  "generated_at": "2026-10-24T05:04:26Z",
+  "generated_at": "2026-10-24T07:20:58Z",
   "layers": [
     {
       "caught": {
@@ -5897,22 +5897,22 @@
       "hardening": {
         "median": 0.1,
         "n": 168,
-        "p90": 0.1
+        "p90": 0.2
       },
       "hidden_text": {
-        "median": 0.4,
+        "median": 0.6,
         "n": 168,
-        "p90": 1.4
+        "p90": 3.0
       },
       "output_guard": {
-        "median": 0.0,
+        "median": 0.1,
         "n": 168,
         "p90": 0.1
       },
       "screening": {
-        "median": 0.7,
+        "median": 0.8,
         "n": 168,
-        "p90": 0.9
+        "p90": 2.1
       },
       "tool_guard": {
         "median": 0.0,

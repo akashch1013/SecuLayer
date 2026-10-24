@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import os
+import sys
+from pathlib import Path
 from typing import Annotated, cast
 
 import typer
@@ -15,7 +18,57 @@ app = typer.Typer(
     help="SecuLayer: a prompt-injection demo and a layered defense.",
     no_args_is_help=True,
     add_completion=False,
+    pretty_exceptions_show_locals=False,
 )
+
+
+@app.command("mcp")
+def mcp_command(
+    policy: Annotated[
+        Path | None,
+        typer.Option(
+            help="Trusted local TOML policy; see docs/MCP.md.",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+        ),
+    ] = None,
+) -> None:
+    """Start local MCP tools over stdio (no API key or web server required)."""
+    from seculayer.policy import PolicyError
+    from seculayer_demo.mcp_server import run_server
+
+    try:
+        run_server(policy)
+    except (OSError, ValueError, PolicyError):
+        typer.echo("MCP could not start. Check the policy file and local configuration.", err=True)
+        raise typer.Exit(2) from None
+
+
+@app.command("mcp-config")
+def mcp_config(
+    policy: Annotated[
+        Path | None, typer.Option(help="Local policy to use.", exists=True, dir_okay=False)
+    ] = None,
+) -> None:
+    """Print ready-to-paste desktop MCP JSON for this installation."""
+    args = ["-m", "seculayer_demo.cli", "mcp"]
+    if policy is not None:
+        args.extend(["--policy", str(policy.resolve())])
+    typer.echo(
+        json.dumps(
+            {
+                "mcpServers": {
+                    "seculayer": {
+                        "command": sys.executable,
+                        "args": args,
+                    }
+                }
+            },
+            indent=2,
+        )
+    )
 
 
 def _load_settings() -> Settings:

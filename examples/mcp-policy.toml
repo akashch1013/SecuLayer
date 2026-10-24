@@ -1,0 +1,20 @@
+# Copy to a private file, then pass --policy /absolute/path/to/policy.toml.
+# Policy changes take effect after restarting the MCP server.
+user_name = "the user"
+protected_values = ["DEMO-SECRET-4417"]
+allowed_domains = ["fernway.example"]
+contacts = ["priya@fernway.example"]
+
+[protected_labels]
+DEMO-SECRET-4417 = "the example private code"
+
+# Declare every tool that review_action may review. Unknown tools are blocked.
+# Only declare outbound = false for tools that truly cannot write or send data.
+[tools.send_email]
+outbound = true
+recipient_fields = ["to", "cc", "bcc"]
+data_fields = ["subject", "body"]
+user_intent_words = ["send", "reply", "forward", "email"]
+
+[tools.search_documents]
+outbound = false

@@ -398,7 +398,7 @@ export function PromptAnatomy({
       id="prompt-anatomy"
       tabIndex={-1}
       aria-labelledby={headingId}
-      className="space-y-4 border-t border-border pt-6 focus:outline-none"
+      className="space-y-4 border-t border-border pt-6"
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h2 id={headingId} className="text-h3 text-ink">

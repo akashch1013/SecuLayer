@@ -1,5 +1,6 @@
 # Secrets
 .env
+mcp-policy.local.toml
 
 # Python
 .venv/
