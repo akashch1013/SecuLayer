@@ -180,6 +180,12 @@ def clone_entry(after, title):
     return p
 
 
+# Text runs replaced word for word (the author's later edits to the front matter).
+RUN_TEXT = {', Department of ': ', ',
+            'Electronics and Telecommunication Engineering (ENTC)':
+                'Institute of Information and Communication Technology (IICT)'}
+
+
 def build(pages):
     doc = Document(SOURCE)
     body = doc.element.body
@@ -205,6 +211,16 @@ def build(pages):
         if parts[0] in rolls:
             two_sided(p, *parts)
             two_sided(sigs[i + 1], rolls[parts[0]], rolls[parts[1]])
+
+    for t in body.iter(w('t')):
+        if t.text in RUN_TEXT:
+            t.text = RUN_TEXT[t.text]
+    # LibreOffice drops the certificate's closing full stop when it is a run of its own.
+    cert = find(body, 'This is to certify that', front=True)
+    ts = list(cert.iter(w('t')))
+    if ts[-1].text == '.':
+        ts[-2].text += '.'
+        ts[-1].text = ''
 
     for prefix, markup in X.REWRITE.items():
         rewrite(find(body, prefix), markup)
