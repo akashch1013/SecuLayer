@@ -351,3 +351,9 @@ This extends the original demo plan; it does not intercept other MCP servers' ca
   followed by final status/commits. **External prerequisite for M10:** no OpenAI key is
   configured here, so the real live-mode acceptance run cannot be performed. Do not mark
   M10 complete or create v1.0 until that check passes.
+
+## Project report: 50-page version with borders (2026-10-24)
+- The author edited the report in Google Docs, which drops page borders, roman page numbers and page breaks on export. `projectreport/build/extend_report.py` rebuilds `SecuLayer_Project_Report.docx`/`.pdf` from that edited copy (`build/out/edited.docx`, git-ignored, read only). Run: `python3 projectreport/build/extend_report.py [edited.docx]` (python-docx, pillow, LibreOffice, pdftotext).
+- Restored: dark double border on the cover, thin grey border on every other page, roman numbering for the front matter, Contents and Abstract on their own pages, dot leaders in the contents and lists. Fixed: acknowledgement signature lines (one tab stop instead of spaces; roll numbers from the cover), missing full stops, the Appendix A sentence that ended in a colon (commands restored), a stray tracked change that drew change bars on the cover.
+- Added to reach 50 A4 pages (7 front matter, 43 body) with no page ending in an empty band in the LibreOffice render: longer wording from the earlier long draft (`extend_content.py`, no milestone wording), one restored row of Table 6.3 (rows renumbered; the TC reference in 7.1.3 follows), Appendix B (offline screening tables from `build/data/screen_all.json`) and Appendix C (full-size screenshots). Figure sizes and the Appendix B row padding are the tuning knobs at the top of the script.
+- Google Docs cannot show page borders: open the .docx in Word or LibreOffice, or use the PDF.
